@@ -1,9 +1,7 @@
 #include <iostream>
 #include <thread>
-#include <mutex>
 #include <semaphore.h>
 
-std::mutex mtx;  // Mutex to protect the critical section
 sem_t semaphore;  // Semaphore to control access to the critical section
 int sharedResource = 0;
 
@@ -12,16 +10,10 @@ void criticalSection(int threadId) {
         // Wait on the semaphore (decrement)
         sem_wait(&semaphore);
 
-        // Entry section - acquire the lock
-        std::unique_lock<std::mutex> lock(mtx);
-
         // Critical section - the code that needs to be protected
         // int currentValue = sharedResource;
         // std::cout << "Thread " << threadId << " in critical section. Shared resource value: " << currentValue << std::endl;
         ++sharedResource;
-
-        // Exit section - release the lock
-        lock.unlock();
 
         // Signal the semaphore (increment)
         sem_post(&semaphore);
